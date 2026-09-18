@@ -8,25 +8,27 @@ $erro = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome = trim($_POST['nome'] ?? '');
     $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    $telefone = trim($_POST['telefone'] ?? '');
     $senha = $_POST['senha'] ?? '';
-    $tipoUsuario = $_POST['tipo_usuario'] ?? 'tutor';
+    $tipoUsuario = $_POST['tipo'] ?? 'tutor';
 
     if ($nome && $email && $senha) {
         try {
-            $verifica = $pdo->prepare('SELECT id FROM usuarios WHERE email = :email LIMIT 1');
+            $verifica = $pdo->prepare('SELECT id FROM petvida_usuarios WHERE email = :email LIMIT 1');
             $verifica->execute([':email' => $email]);
 
             if ($verifica->fetch()) {
                 $erro = 'Este e-mail já está cadastrado.';
             } else {
                 $hash = password_hash($senha, PASSWORD_DEFAULT);
-                $sql = 'INSERT INTO usuarios (nome, email, senha, tipo_usuario) VALUES (:nome, :email, :senha, :tipo_usuario)';
+                $sql = 'INSERT INTO petvida_usuarios (nome, email, senha, telefone, tipo) VALUES (:nome, :email, :senha, :telefone, :tipo)';
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([
                     ':nome' => $nome,
                     ':email' => $email,
                     ':senha' => $hash,
-                    ':tipo_usuario' => $tipoUsuario,
+                    ':telefone' => $telefone,
+                    ':tipo' => $tipoUsuario,
                 ]);
 
                 $sucesso = 'Cadastro realizado com sucesso! Faça login para continuar.';
@@ -69,13 +71,18 @@ include __DIR__ . '/../includes/header.php';
                 </div>
 
                 <div class="form-group">
+                    <label for="telefone">Telefone</label>
+                    <input type="tel" id="telefone" name="telefone" placeholder="(11) 99999-9999">
+                </div>
+
+                <div class="form-group">
                     <label for="senha">Senha</label>
                     <input type="password" id="senha" name="senha" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="tipo_usuario">Tipo de usuário</label>
-                    <select id="tipo_usuario" name="tipo_usuario">
+                    <label for="tipo">Tipo de usuário</label>
+                    <select id="tipo" name="tipo">
                         <option value="tutor">Tutor</option>
                         <option value="veterinario">Veterinário</option>
                         <option value="admin">Administrador</option>

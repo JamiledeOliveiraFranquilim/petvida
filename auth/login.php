@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($email && $senha) {
         try {
-            $sql = 'SELECT id, nome, email, senha, tipo_usuario FROM usuarios WHERE email = :email LIMIT 1';
+            $sql = 'SELECT id, nome, email, senha, tipo FROM petvida_usuarios WHERE email = :email LIMIT 1';
             $stmt = $pdo->prepare($sql);
             $stmt->execute([':email' => $email]);
             $usuario = $stmt->fetch();
@@ -18,11 +18,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($usuario && password_verify($senha, $usuario['senha'])) {
                 $_SESSION['usuario_id'] = (int) $usuario['id'];
                 $_SESSION['nome_usuario'] = $usuario['nome'];
-                $_SESSION['tipo_usuario'] = $usuario['tipo_usuario'];
+                $_SESSION['tipo_usuario'] = $usuario['tipo'];
 
-                if ($usuario['tipo_usuario'] === 'admin') {
+                if ($usuario['tipo'] === 'admin') {
                     header('Location: /petvida/admin/dashboard.php');
-                } elseif ($usuario['tipo_usuario'] === 'veterinario') {
+                } elseif ($usuario['tipo'] === 'veterinario') {
                     header('Location: /petvida/veterinario/dashboard.php');
                 } else {
                     header('Location: /petvida/tutor/dashboard.php');

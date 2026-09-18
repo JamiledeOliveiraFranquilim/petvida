@@ -1,7 +1,7 @@
 <?php
 include __DIR__ . '/includes/header.php';
 ?>
-<main>
+<div>
     <section class="hero">
         <div class="container hero-grid">
             <div>
@@ -27,6 +27,6 @@ include __DIR__ . '/includes/header.php';
             </div>
         </div>
     </section>
-</main>
+</div>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
